@@ -11,9 +11,7 @@ import java.util.*;
 
 public class HoppersConfig implements Configuration {
 
-    public final static char EMPTY_CELL = '.';
-
-    public final static char INVALID_CELL = '*';
+    private static String VALID_CELL = ".";
 
     private static int ROW;
 
@@ -33,45 +31,106 @@ public class HoppersConfig implements Configuration {
             for(int c = 0; c < COL; c++){
                 String next = f.next();
                 grid[r][c] = next;
+                }
             }
         }
-    }
 
-    public HoppersConfig(){
+    public HoppersConfig(HoppersConfig copy, int currRow, int currCol, int delHRow, int delCRow, int moveRow, int moveCol){
+
+        String colorHopper = copy.grid[currRow][currCol];
+
+        grid = new String[ROW][COL];
+        for(int r = 0; r < ROW; r++){
+            for(int c = 0; c < COL; c++){
+                if(r == currRow && c == currCol){
+                    grid[r][c] = VALID_CELL;
+                }
+                else if(r == delHRow && c == delCRow){
+                    grid[r][c] = VALID_CELL;
+                }
+                else if(r == moveRow && c == moveCol){
+                    grid[r][c] = colorHopper;
+                } else {
+                    grid[r][c] = copy.grid[r][c];
+                }
+            }
+        }
 
     }
 
     @Override
     public boolean isSolution() {
-        return false;
+
+        boolean flag = false;
+
+        for(int r = 0; r < ROW; r++){
+            for(int c = 0; c < COL; c++){
+                if(grid[r][c].equals("G")){
+                    return false;
+                }
+                if(grid[r][c].equals("R")){
+                    flag = true;
+                }
+            }
+        }
+
+        return flag;
     }
 
     @Override
     public Collection<Configuration> getNeighbors() {
         List<Configuration> successors = new LinkedList<>();
-        for(int r = 0; r < ROW; r++){
-            for(int c = 0; c < COL; c++){
-                if(grid[r][c].equals("G") || grid[r][c].equals("R")){
-                    successors.add(checkMove(r, c));
+        for(int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                if (grid[r][c].equals("G") || grid[r][c].equals("R")) {
+                    if (r % 2 == 0) {
+                        if(r + 2 < ROW) {
+                            if (grid[r + 2][c].equals("G") && r + 4 < ROW && grid[r + 4][c].equals(VALID_CELL)) {
+                                successors.add(new HoppersConfig(this, r, c, r + 2, c, r + 4, c));
+                            }
+                        }
+                        if(r - 2 >= 0) {
+                            if (grid[r - 2][c].equals("G") && r - 4 >= 0 && grid[r - 4][c].equals(VALID_CELL)) {
+                                successors.add(new HoppersConfig(this, r, c, r - 2, c, r - 4, c));
+                            }
+                        }
+                        if(c - 2 >= 0) {
+                            if (grid[r][c - 2].equals("G") && c - 4 >= 0 && grid[r][c - 4].equals(VALID_CELL)) {
+                                successors.add(new HoppersConfig(this, r, c, r, c - 2, r, c - 4));
+                            }
+                        }
+                        if(c + 2 < COL) {
+                            if (grid[r][c + 2].equals("G") && c + 4 >= 0 && grid[r][c + 4].equals(VALID_CELL)) {
+                                successors.add(new HoppersConfig(this, r, c, r, c + 2, r, c + 4));
+                            }
+                        }
+                    }
+                    if(r + 1 < ROW && c + 1 < COL) {
+                        if (grid[r + 1][c + 1].equals("G") && r + 2 < ROW && c + 2 < COL && grid[r + 2][c +2].equals(VALID_CELL)) {
+                            successors.add(new HoppersConfig(this, r, c, r + 1, c + 1, r + 2, c + 2));
+                        }
+                    }
+                    if(r + 1 < ROW && c - 1 >= 0) {
+                        if (grid[r + 1][c - 1].equals("G") && r + 2 < ROW && c - 2 < COL && grid[r + 2][c - 2].equals(VALID_CELL)) {
+                            successors.add(new HoppersConfig(this, r, c, r + 1, c - 1, r + 2, c - 2));
+                        }
+                    }
+                    if(r - 1 >= 0 && c + 1 < COL) {
+                        if (grid[r - 1][c + 1].equals("G") && r - 2 < ROW && c + 2 < COL && grid[r - 2][c + 2].equals(VALID_CELL)) {
+                            successors.add(new HoppersConfig(this, r, c, r - 1, c + 1, r - 2, c + 2));
+                        }
+                    }
+                    if(r - 1 >= 0 && c - 1 >= 0) {
+                        if (grid[r - 1][c - 1].equals("G") && r - 2 < ROW && c - 2 < COL && grid[r - 2][c - 2].equals(VALID_CELL)) {
+                            successors.add(new HoppersConfig(this, r, c, r - 1, c - 1, r - 2, c - 2));
+                        }
+                    }
                 }
             }
         }
-
         return successors;
     }
 
-    public Configuration checkMove(int row, int col){
-        if(row % 2 == 0){
-            // check the 8 possible jumps spots
-        }
-        // check the 4 possible jumps spots
-
-        return null;
-    }
-
-    public boolean isValid(){
-        return false;
-    }
 
     @Override
     public String toString(){
@@ -84,4 +143,32 @@ public class HoppersConfig implements Configuration {
         }
         return "";
     }
+
+//    @Override
+//    public boolean equals(Object other){
+//        if(other instanceof HoppersConfig otherConfig){
+//            for(int r = 0; 0 < ROW; r++){
+//                for(int c = 0; 0 < COL; c++){
+//                    if(!grid[r][c].equals(otherConfig.grid[r][c])){
+//                        return false;
+//                    }
+//                }
+//            }
+//        }
+//        return true;
+//    }
+
+    @Override
+    public int hashCode(){
+        int total = 0;
+        for(int r = 0; r < ROW; r++){
+            for(int c = 0; c < COL; c++){
+                if(grid[r][c].equals("G") || grid[r][c].equals("R")){
+                    total += r + c;
+                }
+            }
+        }
+        return total;
+    }
+
 }

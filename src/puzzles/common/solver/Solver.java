@@ -27,7 +27,7 @@ public class Solver {
         Queue<Configuration> queue = new LinkedList<>(); //queue for configurations to be tested
         queue.add(start); // initial configuration first one to be tested
 
-        int totalConfig = 0; // counts the total number of configurations made
+        int totalConfig = 1; // counts the total number of configurations made
         while(!queue.isEmpty() && !queue.peek().isSolution()){ // loops until no more configurations or solution is found
             Configuration currConfig = queue.remove();
             for(Configuration neighbor : currConfig.getNeighbors()){
