@@ -38,7 +38,8 @@ public class Solver {
                 }
             }
         }
-
+        System.out.println("Total configs: " + totalConfig);
+        System.out.println("Unique configs: " + predecessor.size());
         if(queue.isEmpty()){ // if no solution is found then it returns an empty ArrayList
             return new ArrayList<>();
         } else { // if there is a solution it builds the list in reverse order
@@ -49,8 +50,6 @@ public class Solver {
                 path.add(0, config);
                 config = predecessor.get(config);
             }
-            System.out.println("Total configs: " + totalConfig);
-            System.out.println("Unique configs: " + predecessor.size());
             return path;
         }
     }
