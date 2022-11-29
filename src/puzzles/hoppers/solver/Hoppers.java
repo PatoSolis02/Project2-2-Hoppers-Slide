@@ -26,7 +26,9 @@ public class Hoppers {
             System.out.println("No solution found!");
         } else {
             for(int i = 0; i < solution.size(); i++){
-                System.out.println("Step " + i + ": \n" + solution.get(i));
+                System.out.println("Step " + i + ": ");
+                solution.get(i).toString();
+                System.out.println("");
             }
         }
     }
