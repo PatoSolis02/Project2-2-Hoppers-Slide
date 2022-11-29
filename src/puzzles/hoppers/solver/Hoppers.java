@@ -5,6 +5,7 @@ import puzzles.common.solver.Solver;
 import puzzles.hoppers.model.HoppersConfig;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Hoppers {
@@ -17,7 +18,7 @@ public class Hoppers {
         System.out.println("File: " + fileName);
 
         HoppersConfig initConfig = new HoppersConfig(fileName);
-        initConfig.toString();
+        System.out.print(initConfig);
 
         ArrayList<Configuration> solution = Solver.solver(initConfig);
 
@@ -25,7 +26,7 @@ public class Hoppers {
             System.out.println("No solution found!");
         } else {
             for(int i = 0; i < solution.size(); i++){
-                System.out.println("Step " + i + ": \n" + solution.get(i).toString());
+                System.out.println("Step " + i + ": \n" + solution.get(i));
             }
         }
     }
