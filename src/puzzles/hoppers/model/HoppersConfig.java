@@ -58,6 +58,13 @@ public class HoppersConfig implements Configuration {
 
     }
 
+    public int getCOL(){return COL;}
+
+    public int getROW(){return ROW;}
+
+    public String[][] getGrid(){return grid;}
+
+
     @Override
     public boolean isSolution() {
 
