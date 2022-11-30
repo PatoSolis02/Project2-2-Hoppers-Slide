@@ -204,4 +204,94 @@ public class SlideConfig implements Configuration {
         }
         return output.toString();
     }
+
+    public boolean isOutofBounds(int r, int c) {
+        boolean invalid = false;
+        if (!(((r >= 0) && (r < row))
+                || ((c >= 0) && (c < column)))) {
+            return true;
+        }
+        return invalid;
+    }
+
+    public boolean isSelectionEmpty(int r, int c) {
+        boolean empty = false;
+        if ((r == this.emptyRow && c == this.emptyColumn)) {
+            empty = true;
+        }
+        return empty;
+    }
+
+    public boolean isSecondSelectInValid(int firstRow, int firstColumn, int secondRow, int secondColumn) {
+        boolean invalid = true;
+        int rowBefore = secondRow - 1;
+        int rowAfter = secondRow + 1;
+        int colBefore = secondColumn - 1;
+        int colAfter = secondColumn + 1;
+
+        if (isSelectionEmpty(secondRow, secondColumn)) {
+            if (firstRow == secondRow - 1) {
+                if (firstColumn != secondColumn) {
+                    invalid = false;
+                }
+            } if (firstRow == secondRow + 1) {
+//                if (firstColumn == secondColumn - 1 || firstColumn == secondColumn + 1) {
+                if (firstColumn != secondColumn) {
+                    invalid = false;
+                }
+            } if (firstColumn == secondColumn - 1) {
+                if (firstRow != secondRow) {
+                    invalid = false;
+                }
+            } if (firstColumn == secondColumn + 1) {
+                if (firstRow != secondRow) {
+                    invalid = false;
+                }
+            }
+        }
+
+
+//        if (rowBefore < 0 || rowAfter >=
+//
+//
+//                || colBefore < 0 || colAfter >= column) {
+//            invalid = true;
+//        } else if ((secondRow != firstRow - 1 || secondRow != firstRow + 1
+//                || secondColumn != firstColumn - 1 || secondColumn != firstColumn + 1)) {
+//            invalid = true;
+//        }
+        return invalid;
+    }
+
+    public void makeMove(int firstRow, int firstCol, int secondRow, int secondCol) {
+        int tempSave = this.grid[firstRow][firstCol];
+        grid[firstRow][firstCol] = grid[secondRow][secondCol];
+        grid[secondRow][secondCol] = tempSave;
+        this.emptyRow = firstRow;
+        this.emptyColumn = firstCol;
+    }
+
+    public static int getRow() {
+        return row;
+    }
+
+    public static int getColumn() {
+        return column;
+    }
+
+    public int getEmptyRow() {
+        return emptyRow;
+    }
+
+    public int getEmptyColumn() {
+        return emptyColumn;
+    }
+
+    public int getGrid(int r, int c) {
+        return grid[r][c];
+    }
+
+    public String getEmptyCellChar() {
+        return EMPTY_CELL;
+    }
 }

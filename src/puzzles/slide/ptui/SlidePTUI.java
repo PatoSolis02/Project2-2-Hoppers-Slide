@@ -1,6 +1,7 @@
 package puzzles.slide.ptui;
 
 import puzzles.common.Observer;
+import puzzles.slide.model.SlideConfig;
 import puzzles.slide.model.SlideModel;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ public class SlidePTUI implements Observer<SlideModel, String> {
     public void init(String filename) throws IOException {
         this.model = new SlideModel(filename);
         this.model.addObserver(this);
+        System.out.println("Loaded: " + filename);
+        System.out.println(model);
         displayHelp();
     }
 
@@ -32,13 +35,23 @@ public class SlidePTUI implements Observer<SlideModel, String> {
 
     public void run() {
         Scanner in = new Scanner( System.in );
-        for ( ; ; ) {
+        while (this.model.getStatus() == SlideModel.Status.NOT_OVER) {
             System.out.print( "> " );
             String line = in.nextLine();
             String[] words = line.split( "\\s+" );
             if (words.length > 0) {
                 if (words[0].startsWith( "q" )) {
                     break;
+                } else if (words[0].startsWith("s")) {
+                    this.model.select(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
+                } else if (words[0].startsWith("r")) {
+                    this.model.reset();
+                    System.out.println("Puzzle reset!");
+                    System.out.println(this.model);
+                } else if (words[0].startsWith("l")) {
+                    this.model.load(words[1]);
+                } else if (words[0].startsWith("h")) {
+                    this.model.hint();
                 }
                 else {
                     displayHelp();
