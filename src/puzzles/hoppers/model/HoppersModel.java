@@ -16,12 +16,6 @@ public class HoppersModel {
     /** the collection of observers of this model */
     private final List<Observer<HoppersModel, String>> observers = new LinkedList<>();
 
-    public enum Cell{
-        VALID,
-        INVALID,
-        OCCUPIED
-    }
-
     public enum Status{
         NOT_OVER,
         WON,
@@ -30,7 +24,16 @@ public class HoppersModel {
 
     /** the current configuration */
     private HoppersConfig currentConfig;
+
     private Status status;
+
+    private boolean firstSelect;
+
+    private int firstSelectRow;
+
+    private int firstSelectCol;
+
+    private String filename;
 
 
     /**
@@ -54,9 +57,14 @@ public class HoppersModel {
 
     public HoppersModel(String filename) throws IOException {
         this.currentConfig = new HoppersConfig(filename);
+        this.filename = filename;
+        this.status = Status.NOT_OVER;
+        this.firstSelect = true;
     }
 
     public Status getStatus() {return status;}
+
+    public HoppersConfig getCurrentConfig(){return this.currentConfig;}
 
     public void hint(){
 
@@ -72,15 +80,46 @@ public class HoppersModel {
     public void load(String filename){
         try{
             this.currentConfig = new HoppersConfig(filename);
+            this.filename = filename;
             alertObservers("New file loaded!");
         } catch (FileNotFoundException noFile){
             alertObservers("File could not be read.");
         }
     }
 
-    public void select(int row, int col){
+//    public void select(int row, int col){
+//        String[][] currGrid = currentConfig.getGrid();
+//        if(firstSelect){
+//            if(currGrid[row][col].equals("R") || currGrid[row][col].equals("G")){
+//                alertObservers("Selected hopper at [" + row + ", " + col + "]");
+//                this.firstSelect = false;
+//                this.firstSelectRow = row;
+//                this.firstSelectCol = col;
+//            } else {
+//                alertObservers("Invalid selection");
+//            }
+//        } else {
+//            if(currGrid[row][col].equals(".")){
+//                alertObservers("Jumped from (" + firstSelectRow + ", " + firstSelectCol + ") to (" + row + ", " + col + ")");
+//                currGrid[row][col] = currGrid[firstSelectRow][firstSelectCol];
+//                currGrid[firstSelectRow][firstSelectCol] = ".";
+//                currentConfig = new HoppersConfig(this, firstSelectRow, firstSelectCol, )
+//                this.firstSelect = true;
+//            } else {
+//                alertObservers("Can't jump from (" + firstSelectRow + ", " + firstSelectCol + ") to (" + row + ", " + col + ")");
+//            }
+//        }
+//    }
 
+    public void reset(){
+        try{
+            this.currentConfig = new HoppersConfig(filename);
+            alertObservers("Puzzle "  + filename + " reset!");
+        } catch (FileNotFoundException noFile){
+            alertObservers("File could not be reset.");
+        }
     }
+
 
     @Override
     public String toString(){
@@ -88,13 +127,16 @@ public class HoppersModel {
 
         String[][] currGrid = currentConfig.getGrid();
 
-        builder.append(' ');
+        builder.append("  ");
         for(int c = 0; c < currentConfig.getCOL(); c++){
             builder.append(" " + c + " ");
         }
         builder.append('\n');
 
-        builder.append("--".repeat(Math.max(0, currentConfig.getCOL())));
+        builder.append("  ");
+        for(int c = 0; c < currentConfig.getCOL(); c++){
+            builder.append("---");
+        }
         builder.append('\n');
 
         for(int r = 0; r < currentConfig.getROW(); r++){
