@@ -68,8 +68,9 @@ public class HoppersModel {
     public void hint(){
 
         ArrayList<Configuration> solution = Solver.solver(this.currentConfig);
-        if(solution.isEmpty()){
-            alertObservers("There is no solution!");
+        if(this.currentConfig.isSolution()){
+            alertObservers("Solved!");
+            this.status = Status.WON;
         } else {
             this.currentConfig = (HoppersConfig) solution.get(1);
             alertObservers("Successful hint!");

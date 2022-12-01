@@ -34,6 +34,8 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     private Label message;
     private BorderPane buttons;
     private GridPane gridPane;
+    private BorderPane mainBorderPane;
+    private Stage stage;
 
 
     public void init() throws IOException {
@@ -73,8 +75,6 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     public BorderPane makeButtonBorderPane(){
         BorderPane buttonBorderPane = new BorderPane();
 
-        FileChooser fileChooser = new FileChooser();
-
         Button loadButton = new Button();
         loadButton.setText("Load");
 
@@ -95,7 +95,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane mainBorderPane = new BorderPane();
+        mainBorderPane = new BorderPane();
 
         gridPane = makeGridPane();
         buttons = makeButtonBorderPane();
@@ -109,11 +109,8 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
                         FileChooser.ExtensionFilter extentionFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
                         fileChooser.getExtensionFilters().add(extentionFilter);
 
-                        String userDirectoryString = System.getProperty("user.home");
+                        String userDirectoryString = "data/hoppers";
                         File userDirectory = new File(userDirectoryString);
-                        if(!userDirectory.canRead()) {
-                            userDirectory = new File("c:/");
-                        }
                         fileChooser.setInitialDirectory(userDirectory);
 
                         File chosenFile = fileChooser.showOpenDialog(null);
@@ -121,7 +118,6 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
                         String path;
                         if(chosenFile != null) {
                             model.load(chosenFile.getPath());
-                            gridPane = makeGridPane();
                         } else {
                             //default return value
                             path = null;
@@ -136,8 +132,9 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         mainBorderPane.setBottom(buttons);
 
         Scene scene = new Scene(mainBorderPane);
-        stage.setScene(scene);
-        stage.show();
+        this.stage = stage;
+        this.stage.setScene(scene);
+        this.stage.show();
     }
 
     @Override
@@ -145,20 +142,9 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
 
         message.setText(msg);
         model = hoppersModel;
+        mainBorderPane.setCenter(makeGridPane());
+        stage.sizeToScene();
 
-        for (int row = 0; row < model.getCurrentConfig().getROW(); row++) {
-            for (int col = 0; col < model.getCurrentConfig().getCOL(); col++) {
-                if (model.getCurrentConfig().getGrid(row, col).equals("G")) {
-                    gameBoard[row][col].setGraphic(new ImageView(greenFrog));
-                } else if (model.getCurrentConfig().getGrid(row, col).equals("R")) {
-                    gameBoard[row][col].setGraphic(new ImageView(redFrog));
-                } else if (model.getCurrentConfig().getGrid(row, col).equals(".")) {
-                    gameBoard[row][col].setGraphic(new ImageView(lilyPad));
-                } else {
-                    gameBoard[row][col].setGraphic(new ImageView(water));
-                }
-            }
-        }
 
         if(model.getStatus() == HoppersModel.Status.WON) {
             for (int r = 0; r < model.getCurrentConfig().getROW(); r++) {
