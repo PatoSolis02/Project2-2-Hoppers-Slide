@@ -229,6 +229,18 @@ public class HoppersConfig implements Configuration {
         return grid[row][col].equals("G") || grid[row][col].equals("R");
     }
 
+    /**
+     * Checks if the second selection is valid by comparing it to the first selection
+     * and also checks if the move jumps over a hopper. If it meets both conditions,
+     * the configuration saves the row and column of the hopper that was jumped over,
+     * as the hopper at that point in the grid needs to be replaced with a VALID_CELL.
+     *
+     * @param firstRow int, row of first selection
+     * @param firstCol int, column of first selection
+     * @param secondRow int, row of second selection
+     * @param secondCol int, column of second selection
+     * @return boolean, true if valid, false otherwise
+     */
     public boolean isValidSecondSelection(int firstRow, int firstCol, int secondRow, int secondCol) {
 
         int checkChangeRow = secondRow - firstRow;
@@ -287,6 +299,16 @@ public class HoppersConfig implements Configuration {
         return valid;
     }
 
+    /**
+     * Makes the appropriate move given the first and second selections. Makes the
+     * original spot of hopper selected into a VALID_CELL and moves selected hopper
+     * to selected VALID_CELL. Makes the hopper jumped over into a VALID_CELL.
+     *
+     * @param firstRow int, row of selected hopper
+     * @param firstCol int, column of selected hopper
+     * @param secondRow int, row of spot to move hopper to
+     * @param secondCol int, column of spot to mover hopper to
+     */
     public void makeMove(int firstRow, int firstCol, int secondRow, int secondCol){
         String colorHopper = grid[firstRow][firstCol];
         grid[firstRow][firstCol] = ".";
