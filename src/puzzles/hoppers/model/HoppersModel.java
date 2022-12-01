@@ -92,7 +92,7 @@ public class HoppersModel {
             if(this.currentConfig.isOutOfBounds(row, col)){
                 alertObservers("Selection (" + row + " , " + col + ") is out of bounds.");
             } else if(this.currentConfig.isValidFirstSelection(row, col)){
-                alertObservers("Selected hopper at [" + row + ", " + col + "]");
+                alertObservers("Selected hopper at (" + row + ", " + col + ")");
                 this.firstSelect = false;
                 this.firstSelectRow = row;
                 this.firstSelectCol = col;
