@@ -18,8 +18,7 @@ public class HoppersModel {
 
     public enum Status{
         NOT_OVER,
-        WON,
-        LOST
+        WON
     }
 
     /** the current configuration */
@@ -120,6 +119,7 @@ public class HoppersModel {
         try{
             this.currentConfig = new HoppersConfig(filename);
             alertObservers("Puzzle "  + filename + " reset!");
+            this.status = Status.NOT_OVER;
         } catch (FileNotFoundException noFile){
             alertObservers("File could not be reset.");
         }

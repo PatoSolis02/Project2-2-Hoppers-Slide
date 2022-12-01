@@ -223,44 +223,17 @@ public class SlideConfig implements Configuration {
     }
 
     public boolean isSecondSelectInValid(int firstRow, int firstColumn, int secondRow, int secondColumn) {
-        boolean invalid = true;
-        int rowBefore = secondRow - 1;
-        int rowAfter = secondRow + 1;
-        int colBefore = secondColumn - 1;
-        int colAfter = secondColumn + 1;
+        boolean valid = false;
+        int changeInRow = secondRow - firstRow;
+        int changeInCol = secondColumn - firstColumn;
 
-        if (isSelectionEmpty(secondRow, secondColumn)) {
-            if (firstRow == secondRow - 1) {
-                if (firstColumn != secondColumn) {
-                    invalid = false;
-                }
-            } if (firstRow == secondRow + 1) {
-//                if (firstColumn == secondColumn - 1 || firstColumn == secondColumn + 1) {
-                if (firstColumn != secondColumn) {
-                    invalid = false;
-                }
-            } if (firstColumn == secondColumn - 1) {
-                if (firstRow != secondRow) {
-                    invalid = false;
-                }
-            } if (firstColumn == secondColumn + 1) {
-                if (firstRow != secondRow) {
-                    invalid = false;
-                }
+        if(grid[secondRow][secondColumn] == 0){
+            if(changeInRow == -1 || changeInRow == 1 || changeInCol == -1 || changeInCol == 1) {
+                valid = true;
             }
         }
 
-
-//        if (rowBefore < 0 || rowAfter >=
-//
-//
-//                || colBefore < 0 || colAfter >= column) {
-//            invalid = true;
-//        } else if ((secondRow != firstRow - 1 || secondRow != firstRow + 1
-//                || secondColumn != firstColumn - 1 || secondColumn != firstColumn + 1)) {
-//            invalid = true;
-//        }
-        return invalid;
+        return valid;
     }
 
     public void makeMove(int firstRow, int firstCol, int secondRow, int secondCol) {

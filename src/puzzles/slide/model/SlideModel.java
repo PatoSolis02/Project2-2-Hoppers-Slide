@@ -101,7 +101,7 @@ public class SlideModel {
             if (this.currentConfig.isOutofBounds(row, col)) {
                 alertObservers("Invalid selection (" + row + ", " + col + ")");
             }
-            if (this.currentConfig.isSecondSelectInValid(this.firstSelectRow, this.firstSelectColumn, row, col)) {
+            if (!this.currentConfig.isSecondSelectInValid(this.firstSelectRow, this.firstSelectColumn, row, col)) {
                 alertObservers("Can't move from (" + this.firstSelectRow + ", " + this.firstSelectColumn + ") to ("
                         + row + ", " + col + ")");
             } else {
