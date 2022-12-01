@@ -12,10 +12,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The model for the Hoppers game.
+ *
+ * @author Patricio Solis
+ */
 public class HoppersModel {
     /** the collection of observers of this model */
     private final List<Observer<HoppersModel, String>> observers = new LinkedList<>();
 
+    /** the game status */
     public enum Status{
         NOT_OVER,
         WON
@@ -23,15 +29,15 @@ public class HoppersModel {
 
     /** the current configuration */
     private HoppersConfig currentConfig;
-
+    /** current game status */
     private Status status;
-
+    /** true if first selection of hopper; false otherwise */
     private boolean firstSelect;
-
+    /** the row of first selected hopper */
     private int firstSelectRow;
-
+    /** the col of first selected hopper */
     private int firstSelectCol;
-
+    /** the filename of most recently loaded file */
     private String filename;
 
 
@@ -54,6 +60,12 @@ public class HoppersModel {
         }
     }
 
+    /**
+     * Initializes the model with given Hoppers puzzle file
+     *
+     * @param filename the hoppers file to be loaded
+     * @throws IOException
+     */
     public HoppersModel(String filename) throws IOException {
         this.currentConfig = new HoppersConfig(filename);
         this.filename = filename;
@@ -61,22 +73,46 @@ public class HoppersModel {
         this.firstSelect = true;
     }
 
+    /**
+     * Get the current status of the game
+     * @return Status; the current state of game
+     */
     public Status getStatus() {return status;}
 
+    /**
+     * Get the current Hoppers configuration of model
+     *
+     * @return HoppersConfig; the current configuration
+     */
     public HoppersConfig getCurrentConfig(){return this.currentConfig;}
 
+    /**
+     * Solves the current configuration of model and if it is solvable it
+     * makes the model's currentConfiguration to the next step in the solution
+     * it also updates the game state if the puzzle has been solved.
+     *
+     */
     public void hint(){
-
         ArrayList<Configuration> solution = Solver.solver(this.currentConfig);
         if(this.currentConfig.isSolution()){
             alertObservers("Solved!");
             this.status = Status.WON;
-        } else {
+        } else if(!solution.isEmpty()) {
             this.currentConfig = (HoppersConfig) solution.get(1);
             alertObservers("Successful hint!");
+        } else {
+            alertObservers("Not Solvable!");
         }
     }
 
+    /**
+     * Loads the given hoppers puzzle file and makes the currentConfig
+     * to the new configuration given by the file. It also changes the
+     * model's saved filename to the file that was loaded. If the file
+     * could not be found it catches the error.
+     *
+     * @param filename String; the filename to be loaded
+     */
     public void load(String filename){
         try{
             this.currentConfig = new HoppersConfig(filename);
@@ -87,6 +123,21 @@ public class HoppersModel {
         }
     }
 
+    /**
+     * If it is the first selection, it checks if the selection
+     * is out of bounds and if it is a valid selection of a hopper,
+     * and if it is valid it alerts the observers and stores the
+     * row and column of the hopper selected and tells the model
+     * that the first selection has been made. On the second selection,
+     * it checks if the selection is out of bounds and if it is a valid
+     * second selection. If it is a valid second selection, it makes the
+     * hopper move from first selection to second selection. After a move
+     * has been made, it checks if the updated currentConfig is a solution
+     * and if it is it changes the game status to WON.
+     *
+     * @param row int; the row of selection
+     * @param col int; the column of selection
+     */
     public void select(int row, int col){
         if(firstSelect){
             if(this.currentConfig.isOutOfBounds(row, col)){
@@ -116,6 +167,12 @@ public class HoppersModel {
         }
     }
 
+    /**
+     * Resets the puzzle to the original state of the most
+     * recently loaded hoppers file and makes sure that the
+     * status of the game is NOT_OVER.
+     *
+     */
     public void reset(){
         try{
             this.currentConfig = new HoppersConfig(filename);
@@ -126,7 +183,11 @@ public class HoppersModel {
         }
     }
 
-
+    /**
+     * Returns a string representation of the board, suitable for printing out.
+     *
+     * @return the string representation
+     */
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
