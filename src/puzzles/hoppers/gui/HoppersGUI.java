@@ -33,6 +33,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     private Button[][] gameBoard;
     private Label message;
     private BorderPane buttons;
+    private GridPane gridPane;
 
 
     public void init() throws IOException {
@@ -40,6 +41,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         this.model = new HoppersModel(filename);
         message = new Label("Loaded: " + filename);
         model.addObserver(this);
+        gridPane = makeGridPane();
     }
 
 
@@ -95,7 +97,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     public void start(Stage stage) throws Exception {
         BorderPane mainBorderPane = new BorderPane();
 
-        GridPane makeGridPane = makeGridPane();
+        gridPane = makeGridPane();
         buttons = makeButtonBorderPane();
         Button loadButton = (Button) buttons.getLeft();
         loadButton.setOnAction(
@@ -119,6 +121,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
                         String path;
                         if(chosenFile != null) {
                             model.load(chosenFile.getPath());
+                            gridPane = makeGridPane();
                         } else {
                             //default return value
                             path = null;
@@ -129,7 +132,7 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         );
 
         mainBorderPane.setTop(message);
-        mainBorderPane.setCenter(makeGridPane);
+        mainBorderPane.setCenter(gridPane);
         mainBorderPane.setBottom(buttons);
 
         Scene scene = new Scene(mainBorderPane);
@@ -143,13 +146,13 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         message.setText(msg);
         model = hoppersModel;
 
-        for(int row = 0; row < model.getCurrentConfig().getROW(); row++){
-            for(int col = 0; col < model.getCurrentConfig().getCOL(); col++){
-                if(model.getCurrentConfig().getGrid(row, col).equals("G")){
+        for (int row = 0; row < model.getCurrentConfig().getROW(); row++) {
+            for (int col = 0; col < model.getCurrentConfig().getCOL(); col++) {
+                if (model.getCurrentConfig().getGrid(row, col).equals("G")) {
                     gameBoard[row][col].setGraphic(new ImageView(greenFrog));
-                } else if(model.getCurrentConfig().getGrid(row, col).equals("R")){
+                } else if (model.getCurrentConfig().getGrid(row, col).equals("R")) {
                     gameBoard[row][col].setGraphic(new ImageView(redFrog));
-                } else if(model.getCurrentConfig().getGrid(row,col).equals(".")){
+                } else if (model.getCurrentConfig().getGrid(row, col).equals(".")) {
                     gameBoard[row][col].setGraphic(new ImageView(lilyPad));
                 } else {
                     gameBoard[row][col].setGraphic(new ImageView(water));
