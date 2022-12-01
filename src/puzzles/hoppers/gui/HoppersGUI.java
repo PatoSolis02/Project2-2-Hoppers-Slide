@@ -23,21 +23,36 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     /** The resources directory is located directly underneath the gui package */
     private final static String RESOURCES_DIR = "resources/";
 
-    // for demonstration purposes
+    /** image of red hopper */
     private Image redFrog = new Image(getClass().getResourceAsStream(RESOURCES_DIR+"red_frog.png"));
+    /** image of green hopper */
     private Image greenFrog = new Image(getClass().getResourceAsStream(RESOURCES_DIR + "green_frog.png"));
+    /** image of valid jump spot */
     private Image lilyPad = new Image(getClass().getResourceAsStream(RESOURCES_DIR + "lily_pad.png"));
+    /** image of invalid jump spot */
     private Image water = new Image(getClass().getResourceAsStream(RESOURCES_DIR + "water.png"));
 
+    /** gives access to the grid in the model */
     private HoppersModel model;
+    /** grid of buttons to make each one distinct and functional */
     private Button[][] gameBoard;
+    /** displays the update message given by pressing a button */
     private Label message;
+    /** gives access to borderPane containing load, reset, and hint buttons */
     private BorderPane buttons;
+    /** the gridPane containing the buttons representing the current model */
     private GridPane gridPane;
+    /** the main border pane that holds the message, grid pane, and buttons */
     private BorderPane mainBorderPane;
+    /** the stage displaying the scene */
     private Stage stage;
 
 
+    /**
+     * Initializes the GUI
+     *
+     * @throws IOException
+     */
     public void init() throws IOException {
         String filename = getParameters().getRaw().get(0);
         this.model = new HoppersModel(filename);
@@ -46,7 +61,16 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         gridPane = makeGridPane();
     }
 
-
+    /**
+     * Makes a GridPane that is populated with buttons representing the
+     * current model and the positions of valid jump spots being
+     * represented by lily pads, positions of hoppers represented
+     * by frogs (with specific color), and invalid spots represented
+     * by water. Each buttons calls model.select() on action with its
+     * specified row and col.
+     *
+     * @return GridPane filled with buttons representing the current model
+     */
     public GridPane makeGridPane(){
         GridPane gridPane = new GridPane();
         gameBoard = new Button[model.getCurrentConfig().getROW()][model.getCurrentConfig().getCOL()];
@@ -72,34 +96,18 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
         return gridPane;
     }
 
+    /**
+     * Makes a BorderPane filled with the load, reset, and hint
+     * buttons to be displayed in the main border pane.
+     *
+     * @return BorderPane filled with necessary buttons
+     */
     public BorderPane makeButtonBorderPane(){
         BorderPane buttonBorderPane = new BorderPane();
 
+        /* makes the button for loading and sets action to open file directory with hopper puzzles */
         Button loadButton = new Button();
         loadButton.setText("Load");
-
-        Button resetButton = new Button();
-        resetButton.setText("Reset");
-        resetButton.setOnAction(event -> model.reset());
-
-        Button hintButton = new Button();
-        hintButton.setText("Hint");
-        hintButton.setOnAction(event -> model.hint());
-
-        buttonBorderPane.setLeft(loadButton);
-        buttonBorderPane.setCenter(resetButton);
-        buttonBorderPane.setRight(hintButton);
-
-        return buttonBorderPane;
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        mainBorderPane = new BorderPane();
-
-        gridPane = makeGridPane();
-        buttons = makeButtonBorderPane();
-        Button loadButton = (Button) buttons.getLeft();
         loadButton.setOnAction(
                 new EventHandler<ActionEvent>() {
                     @Override
@@ -127,10 +135,48 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
                 }
         );
 
+        /* makes the reset button that resets the puzzle on action */
+        Button resetButton = new Button();
+        resetButton.setText("Reset");
+        resetButton.setOnAction(event -> model.reset());
+
+        /* makes the hint button that gives a hint on action */
+        Button hintButton = new Button();
+        hintButton.setText("Hint");
+        hintButton.setOnAction(event -> model.hint());
+
+        /* populates the borderPane */
+        buttonBorderPane.setLeft(loadButton);
+        buttonBorderPane.setCenter(resetButton);
+        buttonBorderPane.setRight(hintButton);
+
+        return buttonBorderPane;
+    }
+
+    /**
+     * Start the stage to display the scene
+     *
+     * @param stage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     * @throws Exception
+     */
+    @Override
+    public void start(Stage stage) throws Exception {
+        mainBorderPane = new BorderPane();
+
+        /* makes the grid pane */
+        gridPane = makeGridPane();
+        /* makes the buttons */
+        buttons = makeButtonBorderPane();
+
+        /* populates main border pane */
         mainBorderPane.setTop(message);
         mainBorderPane.setCenter(gridPane);
         mainBorderPane.setBottom(buttons);
 
+        /* create scene and stage */
         Scene scene = new Scene(mainBorderPane);
         this.stage = stage;
         this.stage.setScene(scene);
@@ -140,12 +186,16 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
     @Override
     public void update(HoppersModel hoppersModel, String msg) {
 
+        /* sets the message label to action done by user */
         message.setText(msg);
+        /* updates to the new model after action */
         model = hoppersModel;
+        /* remakes the gridPane to match the new model */
         mainBorderPane.setCenter(makeGridPane());
+        /* sets window size to same size as scene */
         stage.sizeToScene();
 
-
+        /* disables all buttons if the game has been won */
         if(model.getStatus() == HoppersModel.Status.WON) {
             for (int r = 0; r < model.getCurrentConfig().getROW(); r++) {
                 for (int c = 0; c < model.getCurrentConfig().getCOL(); c++) {
@@ -155,12 +205,6 @@ public class HoppersGUI extends Application implements Observer<HoppersModel, St
             buttons.getLeft().setDisable(true);
             buttons.getCenter().setDisable(true);
             buttons.getRight().setDisable(true);
-        } else {
-            for (int r = 0; r < model.getCurrentConfig().getROW(); r++) {
-                for (int c = 0; c < model.getCurrentConfig().getCOL(); c++) {
-                    gameBoard[r][c].setDisable(false);
-                }
-            }
         }
     }
 
