@@ -21,7 +21,8 @@ public class Hoppers {
         System.out.print(initConfig);
 
         ArrayList<Configuration> solution = Solver.solver(initConfig);
-
+        System.out.println("Total configs: " + Solver.getTotalCount());
+        System.out.println("Unique configs: " + Solver.getUniqueCount());
         if(solution.isEmpty()){
             System.out.println("No solution found!");
         } else {

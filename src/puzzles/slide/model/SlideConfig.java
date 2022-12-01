@@ -215,24 +215,18 @@ public class SlideConfig implements Configuration {
     }
 
     public boolean isSelectionEmpty(int r, int c) {
-        boolean empty = false;
-        if ((r == this.emptyRow && c == this.emptyColumn)) {
-            empty = true;
-        }
-        return empty;
+        return r == this.emptyRow && c == this.emptyColumn;
     }
 
-    public boolean isSecondSelectInValid(int firstRow, int firstColumn, int secondRow, int secondColumn) {
+    public boolean isSecondSelectValid(int firstRow, int firstColumn, int secondRow, int secondColumn) {
         boolean valid = false;
         int changeInRow = secondRow - firstRow;
         int changeInCol = secondColumn - firstColumn;
-
-        if(grid[secondRow][secondColumn] == 0){
-            if(changeInRow == -1 || changeInRow == 1 || changeInCol == -1 || changeInCol == 1) {
+        if (this.grid[secondRow][secondColumn] == 0) {
+            if (changeInRow == -1 || changeInRow == 1 || changeInCol == -1 || changeInCol == 1) {
                 valid = true;
             }
         }
-
         return valid;
     }
 
@@ -250,14 +244,6 @@ public class SlideConfig implements Configuration {
 
     public static int getColumn() {
         return column;
-    }
-
-    public int getEmptyRow() {
-        return emptyRow;
-    }
-
-    public int getEmptyColumn() {
-        return emptyColumn;
     }
 
     public int getGrid(int r, int c) {
