@@ -87,29 +87,34 @@ public class HoppersModel {
         }
     }
 
-//    public void select(int row, int col){
-//        String[][] currGrid = currentConfig.getGrid();
-//        if(firstSelect){
-//            if(currGrid[row][col].equals("R") || currGrid[row][col].equals("G")){
-//                alertObservers("Selected hopper at [" + row + ", " + col + "]");
-//                this.firstSelect = false;
-//                this.firstSelectRow = row;
-//                this.firstSelectCol = col;
-//            } else {
-//                alertObservers("Invalid selection");
-//            }
-//        } else {
-//            if(currGrid[row][col].equals(".")){
-//                alertObservers("Jumped from (" + firstSelectRow + ", " + firstSelectCol + ") to (" + row + ", " + col + ")");
-//                currGrid[row][col] = currGrid[firstSelectRow][firstSelectCol];
-//                currGrid[firstSelectRow][firstSelectCol] = ".";
-//                currentConfig = new HoppersConfig(this, firstSelectRow, firstSelectCol, )
-//                this.firstSelect = true;
-//            } else {
-//                alertObservers("Can't jump from (" + firstSelectRow + ", " + firstSelectCol + ") to (" + row + ", " + col + ")");
-//            }
-//        }
-//    }
+    public void select(int row, int col){
+        if(firstSelect){
+            if(this.currentConfig.isOutOfBounds(row, col)){
+                alertObservers("Selection (" + row + " , " + col + ") is out of bounds.");
+            } else if(this.currentConfig.isValidFirstSelection(row, col)){
+                alertObservers("Selected hopper at [" + row + ", " + col + "]");
+                this.firstSelect = false;
+                this.firstSelectRow = row;
+                this.firstSelectCol = col;
+            } else {
+                alertObservers("Invalid selection");
+            }
+        } else {
+            if(this.currentConfig.isOutOfBounds(row, col)){
+                alertObservers("Selection (" + row + " , " + col + ") is out of bounds.");
+            } else if(this.currentConfig.isValidSecondSelection(firstSelectRow, firstSelectCol, row, col)){
+                this.currentConfig.makeMove(firstSelectRow, firstSelectCol, row, col);
+                alertObservers("Jumped from (" + firstSelectRow + ", " + firstSelectCol + ") to (" + row + ", " + col + ")");
+            } else {
+                alertObservers("Can't jump from (" + firstSelectRow + ", " + firstSelectCol + ") to (" + row + ", " + col + ")");
+            }
+            this.firstSelect = true;
+        }
+        if(this.currentConfig.isSolution()){
+            this.status = Status.WON;
+            alertObservers("YOU WON!");
+        }
+    }
 
     public void reset(){
         try{
@@ -124,8 +129,6 @@ public class HoppersModel {
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
-
-        String[][] currGrid = currentConfig.getGrid();
 
         builder.append("  ");
         for(int c = 0; c < currentConfig.getCOL(); c++){
@@ -142,7 +145,7 @@ public class HoppersModel {
         for(int r = 0; r < currentConfig.getROW(); r++){
             builder.append(r + "|");
             for(int c = 0; c < currentConfig.getCOL(); c++){
-                builder.append(" " + currGrid[r][c] + " ");
+                builder.append(" " + currentConfig.getGrid(r, c) + " ");
             }
             builder.append("\n");
         }

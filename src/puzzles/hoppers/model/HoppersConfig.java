@@ -19,6 +19,10 @@ public class HoppersConfig implements Configuration {
 
     private String grid[][];
 
+    private int rowDelete;
+
+    private int colDelete;
+
 
     public HoppersConfig(String filename) throws FileNotFoundException{
         Scanner f = new Scanner(new File(filename));
@@ -62,7 +66,7 @@ public class HoppersConfig implements Configuration {
 
     public int getROW(){return ROW;}
 
-    public String[][] getGrid(){return grid;}
+    public String getGrid(int row, int col){return grid[row][col];}
 
 
     @Override
@@ -163,4 +167,78 @@ public class HoppersConfig implements Configuration {
     public int hashCode() {
         return Arrays.deepHashCode(grid);
     }
+
+    public boolean isOutOfBounds(int row, int col){
+        return row < 0 || col < 0 || row >= ROW || col >= COL;
+    }
+
+    public boolean isValidFirstSelection(int row, int col){
+        return grid[row][col].equals("G") || grid[row][col].equals("R");
+    }
+
+    public boolean isValidSecondSelection(int firstRow, int firstCol, int secondRow, int secondCol) {
+
+        int checkChangeRow = secondRow - firstRow;
+        int checkChangeCol = secondCol - firstCol;
+        boolean valid = false;
+
+        if (checkChangeRow == -4 && !isOutOfBounds(firstRow - 2, firstCol)){
+            if(grid[firstRow - 2][firstCol].equals("G")) {
+                valid = true;
+                rowDelete = firstRow - 2;
+                colDelete = firstCol;
+            }
+        } else if (checkChangeRow == -2 && checkChangeCol == 2 && !isOutOfBounds(firstRow - 1, firstCol + 1)){
+                if(grid[firstRow - 1][firstCol + 1].equals("G")) {
+                    valid = true;
+                    rowDelete = firstRow - 1;
+                    colDelete = firstCol + 1;
+                }
+        } else if (checkChangeCol == 4 && !isOutOfBounds(firstRow, firstCol + 2)){
+               if(grid[firstRow][firstCol + 2].equals("G")) {
+                   valid = true;
+                   rowDelete = firstRow;
+                   colDelete = firstCol + 2;
+               }
+        } else if (checkChangeRow == 2 && checkChangeCol == 2 && !isOutOfBounds(firstRow + 1, firstCol + 1)){
+                if(grid[firstRow + 1][firstCol + 1].equals("G")) {
+                    valid = true;
+                    rowDelete = firstRow + 1;
+                    colDelete = firstCol + 1;
+                }
+        } else if (checkChangeRow == 4 && !isOutOfBounds(firstRow + 2, firstCol)){
+            if (grid[firstRow + 2][firstCol].equals("G")) {
+                valid = true;
+                rowDelete = firstRow + 2;
+                colDelete = firstCol;
+            }
+        } else if(checkChangeRow == 2 && checkChangeCol == -2 && !isOutOfBounds(firstRow + 1, firstCol - 1)){
+                if(grid[firstRow + 1][firstCol - 1].equals("G")) {
+                    valid = true;
+                    rowDelete = firstRow + 1;
+                    colDelete = firstCol - 1;
+                }
+        } else if(checkChangeRow == -2 && checkChangeCol == -2 && !isOutOfBounds(firstRow - 1, firstCol - 1)){
+                if(grid[firstRow - 1][firstCol - 1].equals("G")) {
+                    valid = true;
+                    rowDelete = firstRow - 1;
+                    colDelete = firstCol - 1;
+                }
+        } else if(!isOutOfBounds(firstRow, firstCol - 2)){
+                if(grid[firstRow][firstCol - 2].equals("G")) {
+                    valid = true;
+                    rowDelete = firstRow;
+                    colDelete = firstCol - 2;
+                }
+        }
+        return valid;
+    }
+
+    public void makeMove(int firstRow, int firstCol, int secondRow, int secondCol){
+        String colorHopper = grid[firstRow][firstCol];
+        grid[firstRow][firstCol] = ".";
+        grid[secondRow][secondCol] = colorHopper;
+        grid[rowDelete][colDelete] = ".";
+    }
+
 }
