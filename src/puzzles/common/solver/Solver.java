@@ -13,6 +13,9 @@ import java.util.Queue;
  */
 public class Solver {
 
+    private static int uniqueCount;
+    private static int totalCount;
+
     /**
      * Solves the puzzle given an initial configuration using BFS
      *
@@ -38,8 +41,8 @@ public class Solver {
                 }
             }
         }
-        System.out.println("Total configs: " + totalConfig);
-        System.out.println("Unique configs: " + predecessor.size());
+        totalCount = totalConfig;
+        uniqueCount = predecessor.size();
         if(queue.isEmpty()){ // if no solution is found then it returns an empty ArrayList
             return new ArrayList<>();
         } else { // if there is a solution it builds the list in reverse order
@@ -52,6 +55,14 @@ public class Solver {
             }
             return path;
         }
+    }
+
+    public static int getUniqueCount() {
+        return uniqueCount;
+    }
+
+    public static int getTotalCount() {
+        return totalCount;
     }
 }
 

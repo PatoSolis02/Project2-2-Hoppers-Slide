@@ -43,6 +43,8 @@ public class Slide {
 
             //Solver called on puzzle values
             List<Configuration> path = Solver.solver(initConfig);
+            System.out.println("Total configs: " + Solver.getTotalCount());
+            System.out.println("Unique configs: " + Solver.getUniqueCount());
             if (path.isEmpty()) {
                 System.out.println("No solution found!");
             } else {
