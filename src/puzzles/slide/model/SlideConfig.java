@@ -238,11 +238,11 @@ public class SlideConfig implements Configuration {
         this.emptyColumn = firstCol;
     }
 
-    public static int getRow() {
+    public int getRow() {
         return row;
     }
 
-    public static int getColumn() {
+    public int getColumn() {
         return column;
     }
 

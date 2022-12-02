@@ -59,9 +59,11 @@ public class SlideModel {
         if (this.currentConfig.isSolution()) {
             alertObservers("Already solved!");
             this.status = Status.WON;
-        } else {
+        } else if (!solution.isEmpty()) {
             this.currentConfig = (SlideConfig) solution.get(1);
             alertObservers("Next step!");
+        } else {
+            alertObservers("Not Solvable!");
         }
     }
 
@@ -70,6 +72,7 @@ public class SlideModel {
             this.currentConfig = new SlideConfig(filename);
             this.filename = filename;
             alertObservers("Loaded: " + filename);
+            this.status = Status.NOT_OVER;
         } catch (FileNotFoundException noFile){
             alertObservers("File could not be read.");
         }
@@ -78,7 +81,8 @@ public class SlideModel {
     public void reset(){
         try{
             this.currentConfig = new SlideConfig(this.filename);
-            alertObservers("Loaded: " + this.filename);
+            alertObservers("Puzzle Reset!");
+            this.status = Status.NOT_OVER;
         } catch (FileNotFoundException noFile){
             alertObservers("File could not be read.");
         }
@@ -120,12 +124,12 @@ public class SlideModel {
     public String toString(){
         StringBuilder output = new StringBuilder();
         output.append("    ");
-        for (int c = 0; c<SlideConfig.getColumn(); c++) {
+        for (int c = 0; c<this.currentConfig.getColumn(); c++) {
             output.append(c).append("  ");
-        } output.append("\n  ").append("-".repeat(Math.max(0, (SlideConfig.getColumn() * 3) + 1))).append("\n");
-        for (int r = 0; r<SlideConfig.getRow(); r++) {
+        } output.append("\n  ").append("-".repeat(Math.max(0, (this.currentConfig.getColumn() * 3) + 1))).append("\n");
+        for (int r = 0; r<this.currentConfig.getRow(); r++) {
             output.append(r).append(" |");
-            for (int c = 0; c<SlideConfig.getColumn(); c++) {
+            for (int c = 0; c<this.currentConfig.getColumn(); c++) {
                 int current = currentConfig.getGrid(r, c);
                 if (current < 10) {
                     output.append(" ");
@@ -144,5 +148,9 @@ public class SlideModel {
 
     public Status getStatus() {
         return status;
+    }
+
+    public SlideConfig getCurrentConfig() {
+        return this.currentConfig;
     }
 }
