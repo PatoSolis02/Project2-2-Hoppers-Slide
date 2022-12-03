@@ -72,7 +72,7 @@ public class SlideConfig implements Configuration {
 
     /**
      * SlideConfig copy constructor
-     * @param copy Copy of slide config to from which to assign the current string
+     * @param copy Copy of slide config to from which to assign the current puzzle
      * @pre Prior constructor and field exists
      * @post Main field updated with determined value
      */
@@ -89,7 +89,7 @@ public class SlideConfig implements Configuration {
      * Determines if value is a solution to the puzzle
      * @pre Configuration exists
      * @post Solution truth determined
-     * @return True if current string equal end goal
+     * @return True if current puzzle equals end goal
      */
     @Override
     public boolean isSolution() {
@@ -205,6 +205,16 @@ public class SlideConfig implements Configuration {
         return output.toString();
     }
 
+    /* ----- NECESSARY MODEL FUNCTIONS ----- */
+
+    /**
+     * Determines if provided coordinates are located outside the current configuration grid
+     * @param r Provided row coordinate
+     * @param c Provided column coordinate
+     * @pre Current configuration exists
+     * @post Bound limit realized
+     * @return true if out of bounds, false otherwise
+     */
     public boolean isOutofBounds(int r, int c) {
         boolean invalid = false;
         if (!(((r >= 0) && (r < row))
@@ -214,22 +224,47 @@ public class SlideConfig implements Configuration {
         return invalid;
     }
 
+    /**
+     * Determines if provided coordinates are located on configuration empty point
+     * @param r Provided row coordinate
+     * @param c Provided column coordinate
+     * @pre Current configuration exists
+     * @post Empty point realized
+     * @return true if on empty point, false otherwise
+     */
     public boolean isSelectionEmpty(int r, int c) {
         return r == this.emptyRow && c == this.emptyColumn;
     }
 
+    /**
+     * Determines if provided set of coordinates (2) are valid when combined
+     * @param firstRow First provided row coordinate
+     * @param firstColumn First provided column coordinate
+     * @param secondRow Second provided row coordinate
+     * @param secondColumn Second provided column coordinate
+     * @pre Current configuration exists
+     * @post Valid relation between coordinates determined
+     * @return true if coordinate values can be swapped, false if otherwise
+     */
     public boolean isSecondSelectValid(int firstRow, int firstColumn, int secondRow, int secondColumn) {
         boolean valid = false;
         int changeInRow = secondRow - firstRow;
         int changeInCol = secondColumn - firstColumn;
-        if (this.grid[secondRow][secondColumn] == 0) {
-            if (changeInRow == -1 || changeInRow == 1 || changeInCol == -1 || changeInCol == 1) {
-                valid = true;
+        if (secondColumn >= 0 && secondColumn < column && secondRow >= 0 && secondRow < row) {
+            if (this.grid[secondRow][secondColumn] == 0) {
+                if ((changeInRow == -1 ^ changeInCol == 1) ^ (changeInCol == -1 ^ changeInRow == 1)) { //XOR
+                    valid = true;
+                }
             }
         }
         return valid;
     }
 
+    /**
+     * Performs move
+     * @pre Current configuration exists
+     * @post Configuration updated to reflect user input
+     */
     public void makeMove(int firstRow, int firstCol, int secondRow, int secondCol) {
         int tempSave = this.grid[firstRow][firstCol];
         grid[firstRow][firstCol] = grid[secondRow][secondCol];
@@ -238,18 +273,44 @@ public class SlideConfig implements Configuration {
         this.emptyColumn = firstCol;
     }
 
+    /**
+     * Row size accessor
+     * @pre Current configuration field exists
+     * @post Row size provided for current configuration
+     * @return Row size
+     */
     public int getRow() {
         return row;
     }
 
+    /**
+     * Column size accessor
+     * @pre Current configuration field exists
+     * @post Column size provided for current configuration
+     * @return Column size
+     */
     public int getColumn() {
         return column;
     }
 
+    /**
+     * Grid value accessor
+     * @param r Provided row coordinate
+     * @param c Provided column coordinate
+     * @pre Current configuration field exists
+     * @post Grid value provided for current configuration on provided coordinates
+     * @return Grid value at specified coordinates
+     */
     public int getGrid(int r, int c) {
         return grid[r][c];
     }
 
+    /**
+     * Empty Cell character (provided for model toString)
+     * @pre Empty Cell character specified
+     * @post Empty Cell character provided
+     * @return Empty Cell String character
+     */
     public String getEmptyCellChar() {
         return EMPTY_CELL;
     }

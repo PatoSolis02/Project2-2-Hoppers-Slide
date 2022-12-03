@@ -1,6 +1,5 @@
 package puzzles.common.solver;
 
-import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -57,10 +56,18 @@ public class Solver {
         }
     }
 
+    /**
+     * Unique Count accessor
+     * @return Count of unique configurations created
+     */
     public static int getUniqueCount() {
         return uniqueCount;
     }
 
+    /**
+     * Total Count accessor
+     * @return Count of total configurations created
+     */
     public static int getTotalCount() {
         return totalCount;
     }
